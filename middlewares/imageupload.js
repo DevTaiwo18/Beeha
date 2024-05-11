@@ -22,7 +22,7 @@ const processImages = async (req, res, next) => {
     try {
         const imagesPromises = req.files.map(file =>
             sharp(file.buffer)
-                .resize(800, 600) 
+                .resize(900, 600) 
                 .toFormat('jpeg') 
                 .jpeg({ quality: 90 }) 
                 .toBuffer() 

@@ -24,7 +24,7 @@ const productSchema = new Schema({
     images: {
         type: [String],
         validate: [arrayLimit, '{PATH} exceeds the limit of 3'],
-    },
+    }, 
     sizes: [{
         type: String,
         enum: ['XS', 'S', 'M', 'L', 'XL', "One Size"],
