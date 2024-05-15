@@ -10,12 +10,7 @@ const adminRoutes = require("./routes/admin")
 const app = express();
 
 app.use(express.json());
-const allowedOrigins = ['http://localhost:5173'];
-
-app.use(cors({
-  origin: allowedOrigins
-}));
-
+app.use(cors(""));
 app.use(morgan("dev"));
 
 
