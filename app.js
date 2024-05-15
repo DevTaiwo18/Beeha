@@ -10,13 +10,7 @@ const adminRoutes = require("./routes/admin")
 const app = express();
 
 app.use(express.json());
-app.use(cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-}));
-
+app.use(cors());
 app.use(morgan("dev"));
 
 
@@ -29,12 +23,12 @@ app.get("/api/v1", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/product", productRoutes);
+app.use("/api/v1/product", productRoutes); 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/admin", adminRoutes);
 
 
-app.all("*", (req, res) => {
+app.all("*", (req, res) =>  {
     res.send(`${req.method} ${req.originalUrl} is not supported`)
 });
 
