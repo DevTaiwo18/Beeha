@@ -4,7 +4,7 @@ const { encryptString } = require("../services/encryption");
 
 const createVerificationTokenAndSendToEmail = async (req, user) => {
   const verificationToken = createToken();
-  const verificationUrl = `${req.protocol}://${req.get("host")}/api/v1/auth/verify/${user.email}/${verificationToken}`;
+  const verificationUrl = `https://beeha.onrender.com/api/v1/auth/verify/${user.email}/${verificationToken}`;
 
   const htmlContent = ` 
     <!DOCTYPE html>
