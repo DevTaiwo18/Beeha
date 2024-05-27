@@ -315,6 +315,26 @@ const saveAddress = async (req, res) => {
     }
 };
 
+const getAddress = async (req, res) => {
+    try {
+        const { id: userId } = req.user;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const address = await Address.findOne({ userId });
+        if (!address) {
+            return res.status(404).json({ message: "Address not found" });
+        }
+
+        res.status(200).json({ address });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const calculateTotalPayment = async (req, res) => {
     const { userId, shippingId } = req.body;
 
@@ -339,11 +359,11 @@ const calculateTotalPayment = async (req, res) => {
 
         const form = {
             email: user.email,
-            amount: totalPayment * 100, 
+            amount: totalPayment * 100,
             callback_url: 'https://1244-105-112-200-6.ngrok-free.app/payment/callback',
             metadata: {
                 userId: user._id.toString(),
-                shippingMethodId: shipping._id.toString() 
+                shippingMethodId: shipping._id.toString()
             }
         };
 
@@ -381,7 +401,7 @@ const paystackWebHook = async (req, res) => {
     if (event.event === "charge.success") {
         try {
             const userId = event.data.metadata.userId;
-            const shippingMethodId = event.data.metadata.shippingMethodId;  
+            const shippingMethodId = event.data.metadata.shippingMethodId;
             const user = await User.findById(userId);
             const cart = await Cart.findOne({ user: userId }).populate('items.product');
 
@@ -457,10 +477,10 @@ const getUserOrders = async (req, res) => {
         const { userId } = req.params;
 
         const orders = await Order.find({ user: userId })
-            .populate('user', 'fullname')  
+            .populate('user', 'fullname')
             .populate({
                 path: 'items.product',
-                select: 'name price'  
+                select: 'name price'
             });
 
         if (!orders.length) {
@@ -495,4 +515,4 @@ const getUserOrders = async (req, res) => {
 };
 
 
-module.exports = { getProductSearchSuggestions, getProductById, addToCart, getCart, getCartItemCount, updateCart, removeItemFromCart, saveAddress, calculateTotalPayment, paystackWebHook, getUserOrders };
+module.exports = { getProductSearchSuggestions, getProductById, addToCart, getCart, getCartItemCount, updateCart, removeItemFromCart, saveAddress, calculateTotalPayment, paystackWebHook, getUserOrders, getAddress };
