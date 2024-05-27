@@ -17,15 +17,15 @@ const storage = multer.memoryStorage();
 const multerUploads = multer({ storage }).array("images", 3);
 
 const processImages = async (req, res, next) => {
-    if (!req.files) return next(); 
+    if (!req.files) return next();
 
     try {
         const imagesPromises = req.files.map(file =>
             sharp(file.buffer)
-                .resize(900, 800) 
-                .toFormat('jpeg') 
-                .jpeg({ quality: 90 }) 
-                .toBuffer() 
+                .resize({ width: 900 })
+                .toFormat('jpeg')
+                .jpeg({ quality: 90 })
+                .toBuffer()
                 .then(resizedBuffer => {
                     const parser = new DatauriParser();
                     return parser.format('.jpeg', resizedBuffer).content;
