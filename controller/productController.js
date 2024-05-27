@@ -7,6 +7,11 @@ const addProduct = async (req, res) => {
     try {
         let imageUrls = req.body.images || [];
 
+        const uploadPromises = imageUrls.map(image => uploader.upload(image));
+        const uploadResults = await Promise.all(uploadPromises);
+
+        imageUrls = uploadResults.map(result => result.secure_url);
+
         const product = new Product({
             ...req.body,
             images: imageUrls
