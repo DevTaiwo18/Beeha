@@ -451,7 +451,7 @@ const paystackWebHook = async (req, res) => {
             await Cart.findByIdAndDelete(cart._id);
 
             await sendEmail({
-                email: 'BeehaLagos@gmail.com',
+                email: 'adeyemitaiwo24434@gmail.com',
                 subject: 'New Order Placed',
                 html: emailContent
             });
