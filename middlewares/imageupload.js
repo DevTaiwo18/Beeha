@@ -21,27 +21,13 @@ const processImages = async (req, res, next) => {
     try {
         const parser = new DatauriParser();
 
-        const imagesPromises = req.files.map(async (file) => {
-            // Use sharp to resize and convert image to JPEG
-            const resizedBuffer = await sharp(file.buffer)
+        const imagesPromises = req.files.map(file => {
+            return sharp(file.buffer)
                 .resize({ width: 800, height: 800, fit: 'contain', background: { r: 229, g: 229, b: 229, alpha: 1 } })
                 .toFormat('jpeg')
                 .jpeg({ quality: 90 })
-                .toBuffer();
-
-            // Upload resized image to Cloudinary
-            const result = await uploader.upload(resizedBuffer, {
-                folder: 'beeha', // Specify your desired folder in Cloudinary
-                transformation: [
-                    { width: 800, height: 800, crop: "fit" }, // Resize and fit within 800x800
-                    { effect: "remove_background" } // Optional: Remove background (if supported by plan)
-                ],
-                format: "jpg",
-                quality: 90
-            });
-
-            // Store Cloudinary URL or transformation result
-            return result.secure_url; // Example: return the secure URL of the modified image
+                .toBuffer()
+                .then(resizedBuffer => parser.format('.jpeg', resizedBuffer).content);
         });
 
         const dataUris = await Promise.all(imagesPromises);
