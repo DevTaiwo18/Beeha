@@ -1,7 +1,6 @@
 const { config, uploader } = require('cloudinary').v2;
 const multer = require('multer');
 const DatauriParser = require('datauri/parser');
-const sharp = require('sharp');
 
 const cloudinaryConfig = () => {
     config({
@@ -21,13 +20,16 @@ const processImages = async (req, res, next) => {
     try {
         const parser = new DatauriParser();
 
-        const imagesPromises = req.files.map(file => {
-            return sharp(file.buffer)
-                .resize({ width: 800, height: 800, fit: 'contain', background: { r: 229, g: 229, b: 229, alpha: 1 } })
-                .toFormat('jpeg')
-                .jpeg({ quality: 90 })
-                .toBuffer()
-                .then(resizedBuffer => parser.format('.jpeg', resizedBuffer).content);
+        const imagesPromises = req.files.map(async (file) => {
+            const dataUri = parser.format(file.originalname, file.buffer).content;
+
+            const result = await uploader.upload(dataUri, {
+                folder: 'Beeha', 
+                format: "jpg",
+                quality: 90
+            });
+
+            return result.secure_url;
         });
 
         const dataUris = await Promise.all(imagesPromises);
