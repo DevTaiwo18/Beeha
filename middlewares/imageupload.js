@@ -23,7 +23,7 @@ const processImages = async (req, res, next) => {
 
         const resizeImage = async (fileBuffer, size) => {
             const image = await Jimp.read(fileBuffer);
-            image.cover(size, size);
+            image.cover(size, size); 
             const resizedBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
             return resizedBuffer;
         };
