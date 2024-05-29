@@ -1,6 +1,7 @@
 const { config, uploader } = require('cloudinary').v2;
 const multer = require('multer');
 const DatauriParser = require('datauri/parser');
+const Jimp = require('jimp');
 
 const cloudinaryConfig = () => {
     config({
@@ -20,11 +21,20 @@ const processImages = async (req, res, next) => {
     try {
         const parser = new DatauriParser();
 
+        const resizeImage = async (fileBuffer, size) => {
+            const image = await Jimp.read(fileBuffer);
+            image.cover(size, size);
+            const resizedBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
+            return resizedBuffer;
+        };
+
         const imagesPromises = req.files.map(async (file) => {
-            const dataUri = parser.format(file.originalname, file.buffer).content;
+            const resizedBuffer = await resizeImage(file.buffer, 800);
+
+            const dataUri = parser.format(file.originalname, resizedBuffer).content;
 
             const result = await uploader.upload(dataUri, {
-                folder: 'Beeha', 
+                folder: 'Beeha',
                 format: "jpg",
                 quality: 90
             });
